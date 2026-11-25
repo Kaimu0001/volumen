@@ -24,5 +24,6 @@ export default defineConfig({
   site: 'https://volumen.dev',
   trailingSlash: 'never',
   build: { format: 'file' },
-  integrations: [sitemap({ filter: (page) => !isNoindex(page) })],
+  // 404 は noindex 判定でも漏れるが、仕様書 §8 に合わせて明示的に除外する
+  integrations: [sitemap({ filter: (page) => !/^\/404\/?$/.test(new URL(page).pathname) && !isNoindex(page) })],
 });
