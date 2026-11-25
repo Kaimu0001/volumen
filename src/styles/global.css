@@ -58,7 +58,10 @@ a:focus-visible {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 24px;
+  /* 320〜360px ではナビ4項目がサイト名と並ぶと横にはみ出すため、サイト名の下の1行に落とす。
+     4項目は折りたたむほど多くないので、ボタンとJSは足さない */
+  flex-wrap: wrap;
+  gap: 8px 24px;
 }
 .brand {
   font-family: var(--font-serif);
