@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import TagList from '../../components/TagList.astro';
+import { getPublishedNotes, groupByTag, noteHref } from '../../lib/notes';
+
+const notes = await getPublishedNotes();
+const tags = [...groupByTag(notes).keys()];
+---
+
+<BaseLayout title="notes" description="技術、読書、哲学と心理学、ガジェットのノート一覧。新しい順。">
+  <div class="page">
+    <p class="eyebrow">Notes</p>
+    <h1>ノート</h1>
+
+    {
+      tags.length > 0 && (
+        <section class="filter" aria-labelledby="filter-heading">
+          <h2 id="filter-heading">タグで絞り込む</h2>
+          <TagList tags={tags} />
+        </section>
+      )
+    }
+
+    <section class="list" aria-labelledby="all-heading">
+      <h2 id="all-heading">すべてのノート</h2>
+      {
+        notes.length > 0 ? (
+          <ol class="entries">
+            {notes.map((note, i) => (
+              <ArticleCard
+                no={i + 1}
+                href={noteHref(note)}
+                title={note.data.title}
+                category={note.data.category}
+                date={note.data.publishedAt}
+              />
+            ))}
+          </ol>
+        ) : (
+          <p class="empty">まだノートはありません。</p>
+        )
+      }
+    </section>
+  </div>
+</BaseLayout>

@@ -1,0 +1,25 @@
+---
+import type { MarkdownHeading } from 'astro';
+
+interface Props {
+  headings: MarkdownHeading[];
+}
+
+// 本文の見出しは ## から始める規約。## と ### を目次に出す。2件以下では出さない
+const items = Astro.props.headings.filter((h) => h.depth === 2 || h.depth === 3);
+---
+
+{
+  items.length >= 3 && (
+    <nav class="toc" aria-labelledby="toc-heading">
+      <h2 id="toc-heading">目次</h2>
+      <ol>
+        {items.map((h) => (
+          <li class={h.depth === 3 ? 'toc-sub' : undefined}>
+            <a href={`#${h.slug}`}>{h.text}</a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+  )
+}

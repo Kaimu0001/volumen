@@ -1,0 +1,39 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPublishedBooks } from '../../lib/books';
+import { formatDate, isoDate } from '../../lib/format';
+
+const books = await getPublishedBooks();
+---
+
+<BaseLayout title="books" description="読了日、評価、一言感想の読書記録。読んだ順に新しいものから。">
+  <div class="page">
+    <p class="eyebrow">Books</p>
+    <h1>読書記録</h1>
+
+    <section class="list" aria-labelledby="books-heading">
+      <h2 id="books-heading">読んだ本</h2>
+      {
+        books.length > 0 ? (
+          <ol class="book-list">
+            {books.map((book) => (
+              <li class="book">
+                <time class="book-date" datetime={isoDate(book.data.readAt)}>
+                  {formatDate(book.data.readAt)}
+                </time>
+                <div>
+                  <h3>{book.data.title}</h3>
+                  {book.data.author && <p class="book-author">{book.data.author}</p>}
+                  <p class="rating">評価 {book.data.rating} / 5</p>
+                  <p class="book-summary">{book.data.summary}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        ) : (
+          <p class="empty">まだ記録はありません。</p>
+        )
+      }
+    </section>
+  </div>
+</BaseLayout>

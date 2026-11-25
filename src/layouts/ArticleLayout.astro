@@ -1,0 +1,106 @@
+---
+import type { MarkdownHeading } from 'astro';
+import { getImage } from 'astro:assets';
+import BaseLayout from './BaseLayout.astro';
+import Toc from '../components/Toc.astro';
+import TagList from '../components/TagList.astro';
+import Prose from '../components/Prose.astro';
+import { AUTHOR, SITE_NAME } from '../consts';
+import { formatDate, isoDate } from '../lib/format';
+import { noteHref, type Note } from '../lib/notes';
+
+interface Props {
+  note: Note;
+  headings: MarkdownHeading[];
+  /** 一つ古い記事 */
+  older?: Note;
+  /** 一つ新しい記事 */
+  newer?: Note;
+}
+
+const { note, headings, older, newer } = Astro.props;
+const { title, description, publishedAt, updatedAt, category, tags, cover } = note.data;
+
+const url = new URL(noteHref(note), Astro.site).href;
+// cover は OGP 上書き専用（本文・一覧には出さない）。未指定なら既定画像。
+// 元画像をそのまま配信すると SNS 側でクロップされ転送量も増えるため、OGP の標準比 1200x630 に整える
+const ogImage = cover
+  ? (await getImage({ src: cover, width: 1200, height: 630, fit: 'cover', format: 'png' })).src
+  : '/og-default.png';
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: title,
+  description,
+  datePublished: isoDate(publishedAt),
+  dateModified: isoDate(updatedAt ?? publishedAt),
+  author: { '@type': 'Person', name: AUTHOR },
+  publisher: { '@type': 'Person', name: AUTHOR },
+  mainEntityOfPage: { '@type': 'WebPage', '@id': url },
+  image: new URL(ogImage, Astro.site).href,
+  inLanguage: 'ja',
+  isPartOf: { '@type': 'Blog', name: SITE_NAME, url: new URL('/', Astro.site).href },
+};
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  type="article"
+  jsonLd={jsonLd}
+  image={ogImage}
+  publishedTime={publishedAt}
+  modifiedTime={updatedAt ?? publishedAt}
+>
+  <article class="page article">
+    <header class="article-head">
+      <p class="entry-meta">
+        <span class="cat">{category}</span>
+        <time datetime={isoDate(publishedAt)}>{formatDate(publishedAt)}</time>
+        {
+          updatedAt && (
+            <span>
+              更新 <time datetime={isoDate(updatedAt)}>{formatDate(updatedAt)}</time>
+            </span>
+          )
+        }
+      </p>
+      <h1>{title}</h1>
+    </header>
+
+    <Toc headings={headings} />
+
+    <Prose><slot /></Prose>
+
+    {
+      tags.length > 0 && (
+        <footer class="article-foot">
+          <TagList tags={tags} />
+        </footer>
+      )
+    }
+
+    {
+      (older || newer) && (
+        <nav class="pager" aria-label="前後の記事">
+          <div class="pager-item">
+            {newer && (
+              <a href={noteHref(newer)} rel="next">
+                <span class="pager-label">次の記事</span>
+                <span class="pager-title">{newer.data.title}</span>
+              </a>
+            )}
+          </div>
+          <div class="pager-item pager-item-end">
+            {older && (
+              <a href={noteHref(older)} rel="prev">
+                <span class="pager-label">前の記事</span>
+                <span class="pager-title">{older.data.title}</span>
+              </a>
+            )}
+          </div>
+        </nav>
+      )
+    }
+  </article>
+</BaseLayout>

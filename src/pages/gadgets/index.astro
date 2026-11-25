@@ -1,0 +1,62 @@
+---
+import { Image } from 'astro:assets';
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Prose from '../../components/Prose.astro';
+import { getPublishedGadgets } from '../../lib/gadgets';
+import { formatDate, isoDate } from '../../lib/format';
+
+const gadgets = await getPublishedGadgets();
+const rendered = await Promise.all(
+  gadgets.map(async (gadget) => ({ gadget, Content: (await render(gadget)).Content })),
+);
+---
+
+<BaseLayout title="gadgets" description="使っている道具の写真、スペック、使った感想。">
+  <div class="page">
+    <p class="eyebrow">Gadgets</p>
+    <h1>道具</h1>
+
+    <section class="list" aria-labelledby="gadgets-heading">
+      <h2 id="gadgets-heading">使った道具</h2>
+      {
+        rendered.length > 0 ? (
+          rendered.map(({ gadget, Content }) => (
+            <article class="gadget">
+              <p class="entry-meta">
+                <span>
+                  使い始め{' '}
+                  <time datetime={isoDate(gadget.data.usedSince)}>{formatDate(gadget.data.usedSince)}</time>
+                </span>
+              </p>
+              <h3>{gadget.data.title}</h3>
+              <p class="lead">{gadget.data.description}</p>
+              {gadget.data.photo && (
+                <Image
+                  class="gadget-photo"
+                  src={gadget.data.photo.src}
+                  alt={gadget.data.photo.alt}
+                  widths={[480, 720]}
+                  sizes="(max-width: 720px) 100vw, 720px"
+                />
+              )}
+              <dl class="spec">
+                {gadget.data.specs.map((s) => (
+                  <>
+                    <dt>{s.label}</dt>
+                    <dd>{s.value}</dd>
+                  </>
+                ))}
+              </dl>
+              <Prose>
+                <Content />
+              </Prose>
+            </article>
+          ))
+        ) : (
+          <p class="empty">まだ記録はありません。</p>
+        )
+      }
+    </section>
+  </div>
+</BaseLayout>

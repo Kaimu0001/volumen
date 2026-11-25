@@ -1,0 +1,71 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { AUTHOR, AUTHOR_EN } from '../consts';
+
+const areas = [
+  { key: '車載', val: 'automotive' },
+  { key: '制御系', val: 'control systems' },
+  { key: '組込', val: 'embedded' },
+];
+const roles = [
+  { key: '実装・テスト', val: 'implementation / test' },
+  { key: '要求分析・設計', val: 'requirements / design' },
+  { key: 'BSE', val: 'BSE' },
+  { key: '管理', val: 'management' },
+];
+---
+
+<BaseLayout
+  title="about"
+  description={`${AUTHOR}（${AUTHOR_EN}）のプロフィール。扱ってきた領域と、このサイトについて。`}
+>
+  <div class="page">
+    <p class="eyebrow">About</p>
+    <h1>{AUTHOR}</h1>
+    <p class="lead">
+      {AUTHOR_EN}。組込ソフトウェアの分野で働いています。読んだこと、考えたことを、この場所に少しずつ書き留めています。
+    </p>
+
+    <section aria-labelledby="career-heading">
+      <h2 id="career-heading">経歴の要約</h2>
+      <p>
+        車載を中心に、制御系の組込ソフトウェアに携わってきました。実装とテストから始まり、要求分析と設計、BSE、管理へと役割を広げています。
+      </p>
+    </section>
+
+    <section aria-labelledby="areas-heading">
+      <h2 id="areas-heading">扱える領域</h2>
+      <ul class="plain-list">
+        {
+          areas.map((a) => (
+            <li>
+              <span class="key">{a.key}</span>
+              <span class="val">{a.val}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section aria-labelledby="roles-heading">
+      <h2 id="roles-heading">担ってきた役割</h2>
+      <ul class="plain-list">
+        {
+          roles.map((r) => (
+            <li>
+              <span class="key">{r.key}</span>
+              <span class="val">{r.val}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section aria-labelledby="site-heading">
+      <h2 id="site-heading">このサイトについて</h2>
+      <p>
+        技術メモ、読書記録、哲学と心理学の思考メモ、ガジェットの比較を、ひとつの場所に蓄積して公開しています。コメント欄や会員機能はありません。
+      </p>
+    </section>
+  </div>
+</BaseLayout>

@@ -1,0 +1,19 @@
+---
+import { SITE_NAME, NAV } from '../consts';
+import { normalizePath, isCurrentPath } from '../lib/path';
+
+const path = normalizePath(Astro.url.pathname);
+---
+
+<header class="site-header">
+  <a class="brand" href="/">{SITE_NAME}</a>
+  <nav class="nav" aria-label="メイン">
+    {
+      NAV.map((item) => (
+        <a href={item.href} aria-current={isCurrentPath(path, item.href) ? 'page' : undefined}>
+          {item.label}
+        </a>
+      ))
+    }
+  </nav>
+</header>

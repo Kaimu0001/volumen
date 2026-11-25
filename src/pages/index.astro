@@ -1,0 +1,68 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import { SHELF, AUTHOR, AUTHOR_EN } from '../consts';
+import { getPublishedNotes, noteHref } from '../lib/notes';
+
+const notes = (await getPublishedNotes()).slice(0, 5);
+
+const personJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: AUTHOR,
+  alternateName: AUTHOR_EN,
+  url: new URL('/', Astro.site).href,
+};
+---
+
+<BaseLayout jsonLd={personJsonLd}>
+  <section class="hero">
+    <p class="eyebrow">A quiet place for notes</p>
+    <h1>読んだこと、考えたこと、<br />作ったことを、棚に置いていく。</h1>
+    <p class="lead">
+      技術、読書、哲学と心理学、ガジェット。日々の理解を少しずつ書き足していくための私的な書庫です。
+    </p>
+  </section>
+
+  <section class="block" aria-labelledby="latest-heading">
+    <div class="block-head">
+      <h2 id="latest-heading">最新のノート</h2>
+      <a class="more" href="/notes">すべて見る</a>
+    </div>
+    {
+      notes.length > 0 ? (
+        <ol class="entries">
+          {notes.map((note, i) => (
+            <ArticleCard
+              no={i + 1}
+              href={noteHref(note)}
+              title={note.data.title}
+              category={note.data.category}
+              date={note.data.publishedAt}
+            />
+          ))}
+        </ol>
+      ) : (
+        <p class="empty">まだノートはありません。</p>
+      )
+    }
+  </section>
+
+  <section class="block" aria-labelledby="shelf-heading">
+    <div class="block-head">
+      <h2 id="shelf-heading">棚</h2>
+    </div>
+    <ul class="shelf">
+      {
+        SHELF.map((s) => (
+          <li>
+            <a href={s.href}>
+              <span class="shelf-kana">{s.kana}</span>
+              <span class="shelf-en">{s.en}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</BaseLayout>

@@ -1,0 +1,20 @@
+---
+import { render } from 'astro:content';
+import ArticleLayout from '../../layouts/ArticleLayout.astro';
+import { getPublishedNotes } from '../../lib/notes';
+
+export async function getStaticPaths() {
+  const notes = await getPublishedNotes(); // 新しい順
+  return notes.map((note, i) => ({
+    params: { slug: note.id },
+    props: { note, newer: notes[i - 1], older: notes[i + 1] },
+  }));
+}
+
+const { note, newer, older } = Astro.props;
+const { Content, headings } = await render(note);
+---
+
+<ArticleLayout note={note} headings={headings} newer={newer} older={older}>
+  <Content />
+</ArticleLayout>

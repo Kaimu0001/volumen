@@ -1,0 +1,53 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import TagList from '../../components/TagList.astro';
+import { getPublishedNotes, groupByTag, noteHref } from '../../lib/notes';
+
+export async function getStaticPaths() {
+  const notes = await getPublishedNotes();
+  const byTag = groupByTag(notes);
+  const allTags = [...byTag.keys()];
+  return allTags.map((tag) => ({
+    params: { tag },
+    props: { tag, notes: byTag.get(tag) ?? [], allTags },
+  }));
+}
+
+const { tag, notes, allTags } = Astro.props;
+---
+
+<!-- 記事が1件だけのタグページは内容が薄い重複ページになるため noindex -->
+<BaseLayout
+  title={`タグ: ${tag}`}
+  description={`「${tag}」のタグが付いたノートの一覧。`}
+  noindex={notes.length < 2}
+>
+  <div class="page">
+    <p class="eyebrow">Tag</p>
+    <h1>{tag}</h1>
+
+    <section class="list" aria-labelledby="tag-notes-heading">
+      <h2 id="tag-notes-heading">該当のノート</h2>
+      <ol class="entries">
+        {
+          notes.map((note, i) => (
+            <ArticleCard
+              no={i + 1}
+              href={noteHref(note)}
+              title={note.data.title}
+              category={note.data.category}
+              date={note.data.publishedAt}
+            />
+          ))
+        }
+      </ol>
+    </section>
+
+    <section class="filter" aria-labelledby="other-tags-heading">
+      <h2 id="other-tags-heading">ほかのタグ</h2>
+      <TagList tags={allTags} current={tag} />
+      <p class="back"><a class="text-link" href="/notes">ノート一覧へ戻る</a></p>
+    </section>
+  </div>
+</BaseLayout>

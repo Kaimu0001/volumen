@@ -1,0 +1,24 @@
+---
+import { formatDate, isoDate } from '../lib/format';
+
+interface Props {
+  no: number;
+  href: string;
+  title: string;
+  category: string;
+  date: Date;
+}
+
+const { no, href, title, category, date } = Astro.props;
+---
+
+<li class="entry">
+  <span class="no">{String(no).padStart(3, '0')}</span>
+  <div class="entry-body">
+    <p class="entry-meta">
+      <span class="cat">{category}</span>
+      <time datetime={isoDate(date)}>{formatDate(date)}</time>
+    </p>
+    <h3><a href={href}>{title}</a></h3>
+  </div>
+</li>

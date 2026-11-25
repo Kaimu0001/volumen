@@ -1,0 +1,25 @@
+---
+import { tagHref } from '../lib/notes';
+
+interface Props {
+  tags: string[];
+  current?: string;
+  label?: string;
+}
+
+const { tags, current, label = 'タグ' } = Astro.props;
+---
+
+{
+  tags.length > 0 && (
+    <ul class="tags" aria-label={label}>
+      {tags.map((tag) => (
+        <li>
+          <a href={tagHref(tag)} aria-current={tag === current ? 'page' : undefined}>
+            {tag}
+          </a>
+        </li>
+      ))}
+    </ul>
+  )
+}
