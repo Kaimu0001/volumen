@@ -9,7 +9,7 @@ specs:
     value: USB-C / Wi-Fi
   - label: 用途
     value: 読書、手書きメモ
-draft: false
+draft: true
 ---
 
 読書用としては目が疲れにくく、夜でも落ち着いて使えた。一方で、動きの速い操作や、色が必要な資料には向かない。

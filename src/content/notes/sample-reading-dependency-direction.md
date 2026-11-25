@@ -4,7 +4,7 @@ description: 大きな変更を読むとき、行単位の差分から入ると�
 publishedAt: 2026-11-20
 category: tech
 tags: [design, code-reading, embedded]
-draft: false
+draft: true
 ---
 
 ## 差分から入ると迷う

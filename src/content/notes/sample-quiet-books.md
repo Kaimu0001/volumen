@@ -4,7 +4,7 @@ description: 読書の質は本の内容より、読む時間の静けさに左�
 publishedAt: 2026-11-14
 category: books
 tags: [reading, habit]
-draft: false
+draft: true
 ---
 
 ## 読めない夜がある
