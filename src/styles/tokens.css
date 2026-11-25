@@ -6,7 +6,7 @@
   --color-muted: #6F665C;
   --color-rule: #DED5C4;
   --color-accent: #33544A;   /* 深緑 */
-  --color-gold: #8C5F24;     /* 黄土。仕様値 #A9762F は紙色上で 3.56:1 でAA未達のため調整(5.02:1) */
+  --color-gold: #8C5F24;     /* 黄土（仕様 §15）。紙色上で 5.02:1 */
 
   --font-serif: "Shippori Mincho", "Hiragino Mincho ProN", serif;
   --font-sans: "Zen Kaku Gothic New", "Hiragino Sans", sans-serif;

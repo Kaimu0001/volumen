@@ -58,8 +58,7 @@ a:focus-visible {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  /* 320〜360px ではナビ4項目がサイト名と並ぶと横にはみ出すため、サイト名の下の1行に落とす。
-     4項目は折りたたむほど多くないので、ボタンとJSは足さない */
+  /* 768px 未満はナビを折りたたむので通常は1行に収まる。wrap は文字サイズを大きくした環境での保険 */
   flex-wrap: wrap;
   gap: 8px 24px;
 }
@@ -69,9 +68,56 @@ a:focus-visible {
   letter-spacing: 0.2em;
   color: var(--color-ink);
 }
-.nav {
+.nav-list,
+.nav-menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.nav-list {
   display: flex;
   gap: 26px;
+}
+/* 768px 未満用の折りたたみ（details/summary、JSなし）。768px 以上では隠す */
+.nav-menu {
+  display: none;
+}
+.nav-menu summary {
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  color: var(--color-muted);
+  cursor: pointer;
+  list-style: none;
+  transition: color var(--transition-color);
+}
+.nav-menu summary::-webkit-details-marker {
+  display: none;
+}
+.nav-menu summary::after {
+  content: '+';
+  display: inline-block;
+  width: 1em;
+  margin-left: 6px;
+  text-align: center;
+}
+.nav-menu[open] summary::after {
+  content: '−';
+}
+.nav-menu summary:hover,
+.nav-menu[open] summary {
+  color: var(--color-ink);
+}
+.nav-menu summary:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 4px;
+}
+.nav-menu ul {
+  margin-top: 10px;
+  text-align: right;
+}
+.nav-menu li a {
+  display: inline-block;
+  padding: 6px 0;
 }
 .nav a {
   font-size: 12px;
@@ -145,7 +191,7 @@ a:focus-visible {
 }
 .more {
   font-size: 11px;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.14em;
   color: var(--color-muted);
   border-bottom: 1px solid var(--color-rule);
   padding-bottom: 2px;
@@ -189,11 +235,11 @@ a:focus-visible {
   display: flex;
   gap: 14px;
   font-size: 10.5px;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   color: var(--color-muted);
 }
 .cat {
-  color: var(--color-accent);
+  color: var(--color-gold);
   text-transform: uppercase;
 }
 .entry h3 {
@@ -202,7 +248,7 @@ a:focus-visible {
   font-weight: 400;
   font-size: 17.5px;
   line-height: 1.7;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.05em;
   text-wrap: pretty;
 }
 .entry h3 a {
@@ -258,7 +304,7 @@ a:focus-visible {
   max-width: 52ch;
 }
 .page section {
-  margin-top: 64px;
+  margin-top: 0;
   padding-top: var(--space-section);
   border-top: 1px solid var(--color-rule);
 }
@@ -492,6 +538,7 @@ a:focus-visible {
   font-family: var(--font-serif);
   font-size: 15px;
   line-height: 1.7;
+  letter-spacing: 0.05em;
   transition: color var(--transition-color);
 }
 .pager a:hover .pager-title {
@@ -518,7 +565,7 @@ a:focus-visible {
 .book-date {
   padding-top: 5px;
   font-size: 10.5px;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   color: var(--color-muted);
   font-variant-numeric: tabular-nums;
 }
@@ -528,7 +575,7 @@ a:focus-visible {
   font-weight: 400;
   font-size: 17.5px;
   line-height: 1.7;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.05em;
 }
 .book-author {
   margin: 0;
@@ -539,8 +586,8 @@ a:focus-visible {
 .rating {
   margin: 6px 0 0;
   font-size: 11px;
-  letter-spacing: 0.12em;
-  color: var(--color-accent);
+  letter-spacing: 0.14em;
+  color: var(--color-gold);
   font-variant-numeric: tabular-nums;
 }
 .book-summary {
@@ -603,7 +650,7 @@ a:focus-visible {
   justify-content: space-between;
   gap: 16px;
   font-size: 11px;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   color: var(--color-muted);
 }
 .site-footer p {
@@ -611,38 +658,16 @@ a:focus-visible {
 }
 
 /* RESPONSIVE */
-@media (max-width: 640px) {
-  .site-header {
-    padding: 24px 22px;
+/* 仕様 §7: 768px 未満は1カラム、ナビは折りたたみ。レイアウトの切り替えはここに集める */
+@media (max-width: 767px) {
+  .nav-list {
+    display: none;
   }
-  .nav {
-    gap: 16px;
-  }
-  .nav a {
-    font-size: 11px;
-    letter-spacing: 0.08em;
-  }
-  .hero {
-    padding: 60px 22px 48px;
-  }
-  .hero h1 {
-    font-size: 25px;
-    line-height: 1.7;
-  }
-  .block {
-    padding: 44px 22px;
-  }
-  .page {
-    padding: 48px 22px 44px;
-  }
-  .page h1 {
-    font-size: 24px;
+  .nav-menu {
+    display: block;
   }
   .shelf {
     grid-template-columns: 1fr;
-  }
-  .article-head h1 {
-    font-size: 23px;
   }
   .book {
     grid-template-columns: 1fr;
@@ -663,9 +688,36 @@ a:focus-visible {
     gap: 10px;
   }
   .site-footer {
-    padding: 32px 22px 56px;
     flex-direction: column;
     gap: 6px;
+  }
+}
+/* 小さい画面では文字と余白だけを詰める */
+@media (max-width: 640px) {
+  .site-header {
+    padding: 24px 22px;
+  }
+  .hero {
+    padding: 60px 22px 48px;
+  }
+  .hero h1 {
+    font-size: 25px;
+    line-height: 1.7;
+  }
+  .block {
+    padding: 52px 22px;
+  }
+  .page {
+    padding: 48px 22px 44px;
+  }
+  .page h1 {
+    font-size: 24px;
+  }
+  .article-head h1 {
+    font-size: 23px;
+  }
+  .site-footer {
+    padding: 32px 22px 56px;
   }
 }
 

@@ -8,12 +8,32 @@ const path = normalizePath(Astro.url.pathname);
 <header class="site-header">
   <a class="brand" href="/">{SITE_NAME}</a>
   <nav class="nav" aria-label="メイン">
-    {
-      NAV.map((item) => (
-        <a href={item.href} aria-current={isCurrentPath(path, item.href) ? 'page' : undefined}>
-          {item.label}
-        </a>
-      ))
-    }
+    {/* 768px 以上: 横並び。768px 未満: details/summary で折りたたむ（JSなし）。
+        表示しない側は display: none なので、支援技術にも読まれるのは常に片方だけ */}
+    <ul class="nav-list">
+      {
+        NAV.map((item) => (
+          <li>
+            <a href={item.href} aria-current={isCurrentPath(path, item.href) ? 'page' : undefined}>
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+    <details class="nav-menu">
+      <summary>menu</summary>
+      <ul>
+        {
+          NAV.map((item) => (
+            <li>
+              <a href={item.href} aria-current={isCurrentPath(path, item.href) ? 'page' : undefined}>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </details>
   </nav>
 </header>
